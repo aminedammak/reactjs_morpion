@@ -81,9 +81,25 @@ class Game extends React.Component {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
+        const goBackToState = (oneState) => {
+            const history = this.state.history;
+            const current = history[history.length - 1];
+            const squares = current.squares.slice();
+            if (calculateWinner(squares) || squares[i]) {
+                return;
+            }
+            squares[i] = this.state.xIsNext ? 'X' : 'O';
+            this.setState({
+                history: history.concat([{
+                    squares: squares
+                }]),
+                xIsNext: !this.state.xIsNext,
+            });
+        }
+
         let moves = history.map((oneState, index) => {
             return (
-                <button key={index}>"Revenir à l'état:" {index}</button>
+                <button key={index} onClick={() => { goBackToState(oneState) }}>"Revenir à l'état:" {index}</button>
             );
         })
 
