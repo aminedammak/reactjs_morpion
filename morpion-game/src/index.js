@@ -49,7 +49,8 @@ class Game extends React.Component {
             history: [{
                 squares: Array(9).fill(null)
             }],
-            xIsNext: true
+            xIsNext: true,
+            move: 0
         };
     }
 
@@ -61,17 +62,21 @@ class Game extends React.Component {
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
+        let move = this.state.move + 1;
         this.setState({
             history: history.concat([{
                 squares: squares
             }]),
             xIsNext: !this.state.xIsNext,
+            move: move
         });
+        console.log(this.state.move);
+
     }
 
     render() {
         const history = this.state.history;
-        const current = history[history.length - 1];
+        const current = history[this.state.move];
         const winner = calculateWinner(current.squares);
 
         let status;
@@ -81,27 +86,24 @@ class Game extends React.Component {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
-        const goBackToState = (oneState) => {
+        const jumpTo = (move) => {
             const history = this.state.history;
-            const current = history[history.length - 1];
-            const squares = current.squares.slice();
-            if (calculateWinner(squares) || squares[i]) {
-                return;
-            }
-            squares[i] = this.state.xIsNext ? 'X' : 'O';
+            console.log(move);
             this.setState({
-                history: history.concat([{
-                    squares: squares
-                }]),
-                xIsNext: !this.state.xIsNext,
-            });
+                move: move
+            })
         }
 
-        let moves = history.map((oneState, index) => {
+        const moves = history.map((step, move) => {
+            const desc = move ?
+                'Revenir au tour n°' + move :
+                'Revenir au début de la partie';
             return (
-                <button key={index} onClick={() => { goBackToState(oneState) }}>"Revenir à l'état:" {index}</button>
+                <li key={move}>
+                    <button onClick={() => jumpTo(move)}>{desc}</button>
+                </li>
             );
-        })
+        });
 
         return (
             <div className="game">
